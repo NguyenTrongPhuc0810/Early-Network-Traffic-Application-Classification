@@ -46,6 +46,7 @@ def run_pcap_prediction(
         out_path=predictions_path,
         source_name=str(pcap_path),
         min_packets=min_packets,
+        write_metadata=False,
     )
 
     metadata = {

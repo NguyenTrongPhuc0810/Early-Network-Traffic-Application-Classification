@@ -58,6 +58,7 @@ def predict_parquet(
         source_name=str(data_path),
         target_column=target_column,
         min_packets=min_packets,
+        write_metadata=True,
     )
 
 
@@ -70,6 +71,7 @@ def predict_dataframe(
     target_column: str | None = None,
     min_packets: int = 10,
     compact_output: bool = True,
+    write_metadata: bool = True,
 ) -> dict[str, Any]:
     """Run a trained model bundle on an in-memory SPLT dataframe."""
 
@@ -118,7 +120,8 @@ def predict_dataframe(
         "output_columns": list(output.columns),
         "prediction_counts": {str(key): int(value) for key, value in summary.items()},
     }
-    write_json(out_path.with_suffix(".metadata.json"), metadata)
+    if write_metadata:
+        write_json(out_path.with_suffix(".metadata.json"), metadata)
     return metadata
 
 
