@@ -7,4 +7,5 @@ param(
 python -m ml_pipeline.predict `
     --model $Model `
     --data $Data `
-    --out $Out
+    --out $Out `
+    --min-packets 10

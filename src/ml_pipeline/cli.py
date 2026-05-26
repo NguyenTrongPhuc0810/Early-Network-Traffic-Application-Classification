@@ -56,6 +56,7 @@ def build_parser() -> argparse.ArgumentParser:
     predict.add_argument("--data", required=True, type=Path)
     predict.add_argument("--out", required=True, type=Path)
     predict.add_argument("--target-column", default=None)
+    predict.add_argument("--min-packets", type=int, default=10)
     return parser
 
 
@@ -124,6 +125,7 @@ def main() -> int:
             data_path=args.data,
             out_path=args.out,
             target_column=args.target_column,
+            min_packets=args.min_packets,
         )
         return 0
 
