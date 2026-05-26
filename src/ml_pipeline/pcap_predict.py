@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Any
 
 from ml_pipeline.evaluate import to_jsonable, write_json
-from ml_pipeline.nfstream_ingest import NFStreamConfig, extract_pcap_to_parquet
-from ml_pipeline.predict import predict_parquet
+from ml_pipeline.nfstream_ingest import NFStreamConfig, extract_pcap_dataframe
+from ml_pipeline.predict import predict_dataframe
 
 
 DEFAULT_MODEL_PATH = Path("data/artifacts/application_63_classes_splt_train_eval/model.joblib")
@@ -30,22 +30,21 @@ def run_pcap_prediction(
     resolved_out_dir = out_dir or Path("data/artifacts") / f"pcap_{pcap_path.stem}"
     resolved_out_dir.mkdir(parents=True, exist_ok=True)
 
-    flows_path = resolved_out_dir / "flows.parquet"
     predictions_path = resolved_out_dir / "predictions.parquet"
 
-    ingest_metadata = extract_pcap_to_parquet(
-        pcap_path=pcap_path,
-        out_path=flows_path,
+    flows_df = extract_pcap_dataframe(
+        pcap_path,
         config=NFStreamConfig(
             n_dissections=n_dissections,
             splt_analysis=splt_analysis,
             statistical_analysis=statistical_analysis,
         ),
     )
-    prediction_metadata = predict_parquet(
+    prediction_metadata = predict_dataframe(
         model_path=model_path,
-        data_path=flows_path,
+        dataframe=flows_df,
         out_path=predictions_path,
+        source_name=str(pcap_path),
         min_packets=min_packets,
     )
 
@@ -53,9 +52,8 @@ def run_pcap_prediction(
         "pcap_path": str(pcap_path),
         "model_path": str(model_path),
         "out_dir": str(resolved_out_dir),
-        "flows_path": str(flows_path),
         "predictions_path": str(predictions_path),
-        "input_flows": int(ingest_metadata["rows"]),
+        "input_flows": int(len(flows_df)),
         "predicted_flows": int(prediction_metadata["rows"]),
         "min_packets": int(min_packets),
         "prediction_counts": prediction_metadata["prediction_counts"],

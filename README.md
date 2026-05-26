@@ -96,8 +96,9 @@ python -m ml_pipeline.predict ^
 
 Use this one-step command when you only want to run a local `.pcap` or
 `.pcapng` file through the trained model and see model predictions. It extracts
-NFStream SPLT flows, applies the same inference filter used by the model
-pipeline (`bidirectional_packets >= 10`), then writes model predictions.
+NFStream SPLT flows in memory, applies the same inference filter used by the
+model pipeline (`bidirectional_packets >= 10`), then writes compact model
+predictions only.
 
 Example for:
 
@@ -125,9 +126,17 @@ traffic-clf predict-pcap ^
 The command prints `prediction_counts` and writes:
 
 ```text
-data/artifacts/pcap_ytb_full_hd/flows.parquet
 data/artifacts/pcap_ytb_full_hd/predictions.parquet
 data/artifacts/pcap_ytb_full_hd/pcap_prediction_metadata.json
+```
+
+`predictions.parquet` is intentionally compact. It contains only:
+
+```text
+flow_index
+bidirectional_packets
+predicted_application_name
+prediction_confidence
 ```
 
 For another PCAP, replace only `--pcap` and optionally `--out-dir`.

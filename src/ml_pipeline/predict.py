@@ -40,11 +40,34 @@ def predict_parquet(
 ) -> dict[str, Any]:
     """Run a trained model bundle on an SPLT parquet and save predictions."""
 
+    raw_dataframe = load_parquet(data_path)
+    return predict_dataframe(
+        model_path=model_path,
+        dataframe=raw_dataframe,
+        out_path=out_path,
+        source_name=str(data_path),
+        target_column=target_column,
+        min_packets=min_packets,
+    )
+
+
+def predict_dataframe(
+    *,
+    model_path: Path,
+    dataframe: pd.DataFrame,
+    out_path: Path,
+    source_name: str,
+    target_column: str | None = None,
+    min_packets: int = 10,
+    compact_output: bool = True,
+) -> dict[str, Any]:
+    """Run a trained model bundle on an in-memory SPLT dataframe."""
+
     bundle = load_model_bundle(model_path)
     resolved_target = target_column or str(bundle.get("target_column", "application_name"))
     feature_width = int(bundle["feature_width"]) if "feature_width" in bundle else None
 
-    raw_dataframe = load_parquet(data_path)
+    raw_dataframe = dataframe.copy()
     if "bidirectional_packets" in raw_dataframe.columns:
         raw_dataframe = raw_dataframe[raw_dataframe["bidirectional_packets"] >= min_packets].copy()
     dataframe = parse_splt_columns(raw_dataframe, DEFAULT_SPLT_COLUMNS)
@@ -56,13 +79,18 @@ def predict_parquet(
     model = bundle["model"]
     predictions = model.predict(features)
 
-    output = dataframe.copy()
-    output[f"predicted_{resolved_target}"] = predictions
+    if compact_output:
+        output = pd.DataFrame({"flow_index": dataframe.index.to_numpy()})
+        if "bidirectional_packets" in dataframe.columns:
+            output["bidirectional_packets"] = dataframe["bidirectional_packets"].to_numpy()
+        output[f"predicted_{resolved_target}"] = predictions
+    else:
+        output = dataframe.copy()
+        output[f"predicted_{resolved_target}"] = predictions
+
     if hasattr(model, "predict_proba"):
         probabilities = model.predict_proba(features)
         output["prediction_confidence"] = probabilities.max(axis=1)
-        for index, label in enumerate(model.classes_):
-            output[f"prob_{label}"] = probabilities[:, index]
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     output.to_parquet(out_path, index=False)
@@ -70,7 +98,7 @@ def predict_parquet(
     summary = pd.Series(predictions).value_counts().sort_index().to_dict()
     metadata = {
         "model_path": str(model_path),
-        "data_path": str(data_path),
+        "data_path": source_name,
         "predictions_path": str(out_path),
         "rows": int(len(output)),
         "target_column": resolved_target,
