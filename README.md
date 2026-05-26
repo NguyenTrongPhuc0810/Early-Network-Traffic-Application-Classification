@@ -145,6 +145,8 @@ application_name
 ```
 
 Here `application_name` is the model prediction for the filtered PCAP flow.
+The model input is exactly 75 values per flow: 25 `splt_direction`, 25
+`splt_ps`, and 25 `splt_piat_ms` values.
 
 For another PCAP, replace only `--pcap` and optionally `--out-dir`.
 

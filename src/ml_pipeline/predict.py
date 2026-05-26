@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from pathlib import Path
 from typing import Any
 
@@ -75,10 +76,13 @@ def predict_dataframe(
 ) -> dict[str, Any]:
     """Run a trained model bundle on an in-memory SPLT dataframe."""
 
+    started_at = time.perf_counter()
     bundle = load_model_bundle(model_path)
+    model_load_seconds = time.perf_counter() - started_at
     resolved_target = target_column or str(bundle.get("target_column", "application_name"))
     feature_width = int(bundle["feature_width"]) if "feature_width" in bundle else None
 
+    feature_started_at = time.perf_counter()
     raw_dataframe = dataframe.copy()
     if "bidirectional_packets" in raw_dataframe.columns:
         raw_dataframe = raw_dataframe[raw_dataframe["bidirectional_packets"] >= min_packets].copy()
@@ -88,9 +92,14 @@ def predict_dataframe(
         splt_columns=DEFAULT_SPLT_COLUMNS,
         width=feature_width,
     )
+    feature_build_seconds = time.perf_counter() - feature_started_at
+
+    inference_started_at = time.perf_counter()
     model = bundle["model"]
     predictions = model.predict(features)
+    inference_seconds = time.perf_counter() - inference_started_at
 
+    output_started_at = time.perf_counter()
     if compact_output:
         output = dataframe.loc[:, list(DEFAULT_SPLT_COLUMNS)].copy()
         for column in DEFAULT_SPLT_COLUMNS:
@@ -106,6 +115,7 @@ def predict_dataframe(
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     output.to_parquet(out_path, index=False)
+    output_write_seconds = time.perf_counter() - output_started_at
 
     summary = pd.Series(predictions).value_counts().sort_index().to_dict()
     metadata = {
@@ -117,6 +127,10 @@ def predict_dataframe(
         "min_packets": int(min_packets),
         "feature_width": int(resolved_width),
         "feature_count": int(features.shape[1]),
+        "model_load_seconds": round(model_load_seconds, 4),
+        "feature_build_seconds": round(feature_build_seconds, 4),
+        "inference_seconds": round(inference_seconds, 4),
+        "output_write_seconds": round(output_write_seconds, 4),
         "output_columns": list(output.columns),
         "prediction_counts": {str(key): int(value) for key, value in summary.items()},
     }

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +33,7 @@ def run_pcap_prediction(
 
     predictions_path = resolved_out_dir / "predictions.parquet"
 
+    started_at = time.perf_counter()
     flows_df = extract_pcap_dataframe(
         pcap_path,
         config=NFStreamConfig(
@@ -40,6 +42,9 @@ def run_pcap_prediction(
             statistical_analysis=statistical_analysis,
         ),
     )
+    extract_seconds = time.perf_counter() - started_at
+
+    predict_started_at = time.perf_counter()
     prediction_metadata = predict_dataframe(
         model_path=model_path,
         dataframe=flows_df,
@@ -48,6 +53,8 @@ def run_pcap_prediction(
         min_packets=min_packets,
         write_metadata=False,
     )
+    predict_seconds = time.perf_counter() - predict_started_at
+    total_seconds = time.perf_counter() - started_at
 
     metadata = {
         "pcap_path": str(pcap_path),
@@ -57,6 +64,15 @@ def run_pcap_prediction(
         "input_flows": int(len(flows_df)),
         "predicted_flows": int(prediction_metadata["rows"]),
         "min_packets": int(min_packets),
+        "feature_width": int(prediction_metadata["feature_width"]),
+        "feature_count": int(prediction_metadata["feature_count"]),
+        "extract_seconds": round(extract_seconds, 4),
+        "predict_seconds": round(predict_seconds, 4),
+        "model_load_seconds": prediction_metadata.get("model_load_seconds"),
+        "feature_build_seconds": prediction_metadata.get("feature_build_seconds"),
+        "inference_seconds": prediction_metadata.get("inference_seconds"),
+        "output_write_seconds": prediction_metadata.get("output_write_seconds"),
+        "total_seconds": round(total_seconds, 4),
         "prediction_counts": prediction_metadata["prediction_counts"],
     }
     write_json(resolved_out_dir / "pcap_prediction_metadata.json", metadata)
