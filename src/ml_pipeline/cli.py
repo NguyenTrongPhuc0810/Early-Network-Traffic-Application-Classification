@@ -7,6 +7,7 @@ from pathlib import Path
 
 from ml_pipeline.evaluate import evaluate_model_bundle
 from ml_pipeline.nfstream_ingest import NFStreamConfig, extract_pcap_to_parquet
+from ml_pipeline.pcap_predict import DEFAULT_MODEL_PATH, run_pcap_prediction
 from ml_pipeline.predict import predict_parquet
 from ml_pipeline.prepare import prepare_splt_dataset
 from ml_pipeline.train import TrainingConfig, train_random_forest
@@ -57,6 +58,18 @@ def build_parser() -> argparse.ArgumentParser:
     predict.add_argument("--out", required=True, type=Path)
     predict.add_argument("--target-column", default=None)
     predict.add_argument("--min-packets", type=int, default=10)
+
+    predict_pcap = subparsers.add_parser(
+        "predict-pcap",
+        help="One-step PCAP -> NFStream SPLT flows -> model predictions.",
+    )
+    predict_pcap.add_argument("--pcap", required=True, type=Path)
+    predict_pcap.add_argument("--model", type=Path, default=DEFAULT_MODEL_PATH)
+    predict_pcap.add_argument("--out-dir", type=Path, default=None)
+    predict_pcap.add_argument("--min-packets", type=int, default=10)
+    predict_pcap.add_argument("--n-dissections", type=int, default=20)
+    predict_pcap.add_argument("--splt-analysis", type=int, default=25)
+    predict_pcap.add_argument("--statistical-analysis", action=argparse.BooleanOptionalAction, default=False)
     return parser
 
 
@@ -126,6 +139,18 @@ def main() -> int:
             out_path=args.out,
             target_column=args.target_column,
             min_packets=args.min_packets,
+        )
+        return 0
+
+    if args.command == "predict-pcap":
+        run_pcap_prediction(
+            pcap_path=args.pcap,
+            model_path=args.model,
+            out_dir=args.out_dir,
+            min_packets=args.min_packets,
+            n_dissections=args.n_dissections,
+            splt_analysis=args.splt_analysis,
+            statistical_analysis=args.statistical_analysis,
         )
         return 0
 
