@@ -92,6 +92,47 @@ python -m ml_pipeline.predict ^
   --out data/artifacts/predictions.parquet
 ```
 
+## Test a Local PCAP with the Trained Model
+
+Use this when you only want to run a local `.pcap` or `.pcapng` file through the
+trained model and see model predictions. This path applies the same inference
+filter used by the model pipeline: `bidirectional_packets >= 10`.
+
+Example for:
+
+```text
+D:\CCNA\raw_pcap\ytb_full_hd.pcapng
+```
+
+Step 1: extract SPLT flows with NFStream.
+
+```bash
+python -m ml_pipeline.nfstream_ingest ^
+  --pcap D:\CCNA\raw_pcap\ytb_full_hd.pcapng ^
+  --out data/interim/ytb_full_hd_flows.parquet ^
+  --n-dissections 20 ^
+  --splt-analysis 25 ^
+  --no-statistical-analysis
+```
+
+Step 2: run model prediction only.
+
+```bash
+python -m ml_pipeline.predict ^
+  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib ^
+  --data data/interim/ytb_full_hd_flows.parquet ^
+  --out data/artifacts/pcap_ytb_full_hd/predictions.parquet ^
+  --min-packets 10
+```
+
+The command prints `prediction_counts` and writes the full per-flow output to:
+
+```text
+data/artifacts/pcap_ytb_full_hd/predictions.parquet
+```
+
+For another PCAP, replace the `--pcap`, `--out`, and prediction output paths.
+
 ## Evaluate Existing Model
 
 ```bash
