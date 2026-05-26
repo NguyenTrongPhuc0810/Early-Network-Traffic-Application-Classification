@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import argparse
 import os
-import shutil
 import sys
 import tempfile
 import urllib.request
@@ -26,8 +25,8 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_DATA_DIR = ROOT
 
 EXPECTED_PATHS = (
-    Path("02-app-classification/data/final_dataset_63_classes_splt.parquet"),
-    Path("act2-project/data/artifacts/application_63_classes_splt_train_eval"),
+    Path("data/raw/final_dataset_63_classes_splt.parquet"),
+    Path("data/artifacts/application_63_classes_splt_train_eval"),
 )
 
 

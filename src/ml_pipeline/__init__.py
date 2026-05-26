@@ -1,1 +1,1 @@
-"""Python training and evaluation pipeline for SPLT traffic classification."""
+"""Clean SPLT 63-class ML pipeline package."""

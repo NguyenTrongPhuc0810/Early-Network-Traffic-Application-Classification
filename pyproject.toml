@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "early-network-traffic-application-classification"
+version = "0.1.0"
+description = "Clean SPLT 63-class Random Forest pipeline for early network traffic classification."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "joblib",
+  "matplotlib",
+  "numpy",
+  "pandas",
+  "pyarrow",
+  "scikit-learn",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
