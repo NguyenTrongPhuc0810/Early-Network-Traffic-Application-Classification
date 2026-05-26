@@ -17,5 +17,16 @@ dependencies = [
   "scikit-learn",
 ]
 
+[project.optional-dependencies]
+pcap = [
+  "nfstream",
+]
+export = [
+  "m2cgen",
+]
+
+[project.scripts]
+traffic-clf = "ml_pipeline.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -1,0 +1,29 @@
+dataset:
+  raw_splt_63: data/raw/final_dataset_63_classes_splt.parquet
+  target_column: application_name
+  splt_columns:
+    - splt_direction
+    - splt_ps
+    - splt_piat_ms
+  feature_width: 25
+  min_packets: 10
+  min_samples_per_application: 1000
+
+model:
+  kind: random_forest
+  n_estimators: 100
+  class_weight: balanced
+  n_jobs: -1
+  random_state: 42
+  test_size: 0.2
+
+nfstream:
+  n_meters: 1
+  n_dissections: 20
+  statistical_analysis: false
+  splt_analysis: 25
+  accounting_mode: 2
+
+artifacts:
+  train_eval_dir: data/artifacts/application_63_classes_splt_train_eval
+  predictions_path: data/artifacts/predictions.parquet

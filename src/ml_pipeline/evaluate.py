@@ -184,7 +184,11 @@ def evaluate_model_bundle(
     width = feature_width or bundle.get("feature_width") if isinstance(bundle, dict) else None
     dataset = load_prepared_dataset(
         data_path,
-        DatasetConfig(target_column=target_column, feature_width=width),
+        DatasetConfig(
+            target_column=target_column,
+            feature_width=width,
+            min_samples_per_application=1,
+        ),
     )
     y_pred = model.predict(dataset.features)
     labels = bundle.get("classes") if isinstance(bundle, dict) else None

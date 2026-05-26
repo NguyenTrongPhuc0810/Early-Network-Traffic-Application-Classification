@@ -34,7 +34,7 @@ venv/
 env/
 .env
 
-# Heavy datasets and packet captures must live outside Git.
+# Heavy generated datasets and packet captures stay outside Git by default.
 *.parquet
 *.csv
 *.tsv
@@ -67,6 +67,23 @@ data/**
 act2-project/data/**
 act2-code/data/**
 !**/.gitkeep
+
+# Curated 63-class SPLT dataset is intentionally tracked so the project can be
+# cloned and run end-to-end without external data access.
+!data/
+!data/raw/
+!data/raw/final_dataset_63_classes_splt.parquet
+!data/interim/
+!data/interim/.gitkeep
+!data/processed/
+!data/processed/.gitkeep
+!data/artifacts/
+!data/artifacts/application_63_classes_splt_train_eval/
+!data/artifacts/application_63_classes_splt_train_eval/README.md
+!data/artifacts/application_63_classes_splt_train_eval/classification_report.json
+!data/artifacts/application_63_classes_splt_train_eval/classification_report.txt
+!data/artifacts/application_63_classes_splt_train_eval/confusion_matrix.png
+!data/artifacts/application_63_classes_splt_train_eval/run_metadata.json
 
 # Generated C export outputs.
 generated/

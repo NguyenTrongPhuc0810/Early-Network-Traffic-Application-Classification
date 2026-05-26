@@ -1,0 +1,10 @@
+joblib
+matplotlib
+numpy
+pandas
+pyarrow
+scikit-learn
+
+# Optional runtime stages:
+# nfstream   # PCAP -> flow parquet extraction
+# m2cgen     # future Random Forest -> C export

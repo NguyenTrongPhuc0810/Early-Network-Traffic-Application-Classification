@@ -1,71 +1,95 @@
 # Early Network Traffic Application Classification
 
-Clean Python package for early network traffic application classification with
-SPLT features and a 63-class Random Forest model.
+End-to-end SPLT pipeline for early network traffic application classification.
+The repository is structured so a new user can clone it, install dependencies,
+train the 63-class Random Forest model, and then run prediction/evaluation.
 
-The code in `src/ml_pipeline` was extracted from the original tutorial
-workspace and refactored into a small package that is easier to test, retrain
-and later bridge into C/eBPF export code.
-
-## Package Layout
-
-```text
-src/
-  ml_pipeline/
-    data_loader.py   # parquet loading, SPLT parsing, feature matrix building
-    train.py         # Random Forest train/eval pipeline
-    evaluate.py      # classification report and confusion matrix generation
-  ebpf_export/
-    __init__.py      # reserved for model-to-C export modules
-data/
-  raw/               # local-only datasets, ignored by Git
-  processed/         # local-only prepared data, ignored by Git
-  artifacts/         # local-only models/reports, ignored by Git
-```
-
-## Data Policy
-
-Large files are not stored in Git:
-
-- parquet/csv datasets
-- packet captures
-- `model.joblib` and other trained model binaries
-
-Place the 63-class SPLT dataset at:
+The included dataset is:
 
 ```text
 data/raw/final_dataset_63_classes_splt.parquet
 ```
 
-Place trained artifacts at:
+It contains curated SPLT features for 63 `application_name` classes. The trained
+`model.joblib` is not tracked because the reference model is about 4 GB; clone
+the repo and retrain it locally.
+
+## Pipeline
 
 ```text
-data/artifacts/application_63_classes_splt_train_eval/
+PCAP/PCAPNG
+  -> NFStream flow extraction
+  -> SPLT dataset preparation
+  -> Random Forest train/evaluate
+  -> prediction artifacts
 ```
 
-Use `setup_data.py` to restore a zip bundle from local storage or an external
-URL.
+Main package:
 
-## Train
+```text
+src/ml_pipeline/
+  nfstream_ingest.py  # PCAP -> flow parquet using NFStream
+  prepare.py          # raw NFStream parquet -> curated SPLT parquet
+  data_loader.py      # SPLT parsing and feature matrix construction
+  train.py            # Random Forest training/evaluation
+  evaluate.py         # reports and confusion matrix
+  predict.py          # batch prediction with a trained model bundle
+  cli.py              # single traffic-clf command
+```
+
+## Setup
 
 ```bash
+python -m venv .venv
+.venv\Scripts\activate
+python -m pip install -U pip
 python -m pip install -e .
+```
+
+For PCAP extraction with NFStream:
+
+```bash
+python -m pip install -e .[pcap]
+```
+
+## Train the Bundled 63-Class SPLT Model
+
+```bash
 python -m ml_pipeline.train ^
   --data data/raw/final_dataset_63_classes_splt.parquet ^
   --out-dir data/artifacts/application_63_classes_splt_train_eval ^
   --target-column application_name ^
-  --feature-width 25
+  --feature-width 25 ^
+  --n-estimators 100 ^
+  --class-weight balanced
 ```
 
-The output bundle contains the fitted Random Forest plus stable feature
-metadata needed by future C/eBPF export code:
+Equivalent installed CLI:
+
+```bash
+traffic-clf train ^
+  --data data/raw/final_dataset_63_classes_splt.parquet ^
+  --out-dir data/artifacts/application_63_classes_splt_train_eval
+```
+
+Outputs:
 
 ```text
-model.joblib
-classification_report.txt
-classification_report.json
-confusion_matrix.png
-run_metadata.json
+data/artifacts/application_63_classes_splt_train_eval/
+  model.joblib
+  classification_report.txt
+  classification_report.json
+  confusion_matrix.png
+  run_metadata.json
+```
+
+## Predict
+
+```bash
+python -m ml_pipeline.predict ^
+  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib ^
+  --data data/raw/final_dataset_63_classes_splt.parquet ^
+  --out data/artifacts/predictions.parquet
 ```
 
 ## Evaluate Existing Model
@@ -77,10 +101,57 @@ python -m ml_pipeline.evaluate ^
   --out-dir data/artifacts/application_63_classes_splt_eval
 ```
 
-## Why SPLT
+## Start from a PCAP
 
-SPLT features use early packet-level sequences: direction, packet size and
-packet inter-arrival time. This keeps the model close to what can be collected
-early in a flow and prepares the project for an AI-driven QoS eBPF/XDP path,
-where the trained model can later be translated into C-compatible decision
-logic.
+Install NFStream first:
+
+```bash
+python -m pip install -e .[pcap]
+```
+
+Extract flows:
+
+```bash
+python -m ml_pipeline.nfstream_ingest ^
+  --pcap samples/input.pcap ^
+  --out data/interim/flows.parquet ^
+  --n-dissections 20 ^
+  --splt-analysis 25
+```
+
+Prepare a curated SPLT dataset:
+
+```bash
+python -m ml_pipeline.prepare ^
+  --input data/interim/flows.parquet ^
+  --out data/processed/splt_dataset.parquet ^
+  --target-column application_name
+```
+
+Then train or predict using the prepared parquet.
+
+## PowerShell Shortcuts
+
+```powershell
+.\scripts\01_extract_pcap.ps1 -Pcap samples\input.pcap
+.\scripts\02_prepare_dataset.ps1
+.\scripts\03_train_eval.ps1
+.\scripts\04_predict.ps1
+```
+
+## Data and Artifacts
+
+Tracked:
+
+- `data/raw/final_dataset_63_classes_splt.parquet`
+- reference report files under `data/artifacts/application_63_classes_splt_train_eval/`
+
+Ignored:
+
+- generated predictions
+- generated `model.joblib`
+- packet captures
+- local cache files
+
+This keeps the project cloneable while still letting users reproduce the model
+from the bundled 63-class SPLT dataset.
