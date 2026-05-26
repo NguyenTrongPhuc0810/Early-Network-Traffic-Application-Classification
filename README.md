@@ -39,7 +39,10 @@ src/ml_pipeline/
 
 ## Setup
 
-```bash
+Run these commands from the repository root:
+
+```powershell
+cd D:\CCNA\ml-flow-class-tutorial\splt63-github-export
 python -m venv .venv
 .venv\Scripts\activate
 python -m pip install -U pip
@@ -54,21 +57,21 @@ python -m pip install -e .[pcap]
 
 ## Train the Bundled 63-Class SPLT Model
 
-```bash
-python -m ml_pipeline.train ^
-  --data data/raw/final_dataset_63_classes_splt.parquet ^
-  --out-dir data/artifacts/application_63_classes_splt_train_eval ^
-  --target-column application_name ^
-  --feature-width 25 ^
-  --n-estimators 100 ^
+```powershell
+python -m ml_pipeline.train `
+  --data data/raw/final_dataset_63_classes_splt.parquet `
+  --out-dir data/artifacts/application_63_classes_splt_train_eval `
+  --target-column application_name `
+  --feature-width 25 `
+  --n-estimators 100 `
   --class-weight balanced
 ```
 
 Equivalent installed CLI:
 
-```bash
-traffic-clf train ^
-  --data data/raw/final_dataset_63_classes_splt.parquet ^
+```powershell
+traffic-clf train `
+  --data data/raw/final_dataset_63_classes_splt.parquet `
   --out-dir data/artifacts/application_63_classes_splt_train_eval
 ```
 
@@ -85,10 +88,10 @@ data/artifacts/application_63_classes_splt_train_eval/
 
 ## Predict
 
-```bash
-python -m ml_pipeline.predict ^
-  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib ^
-  --data data/raw/final_dataset_63_classes_splt.parquet ^
+```powershell
+python -m ml_pipeline.predict `
+  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib `
+  --data data/raw/final_dataset_63_classes_splt.parquet `
   --out data/artifacts/predictions.parquet
 ```
 
@@ -106,20 +109,20 @@ Example for:
 D:\CCNA\raw_pcap\ytb_full_hd.pcapng
 ```
 
-```bash
-python -m ml_pipeline.pcap_predict ^
-  --pcap D:\CCNA\raw_pcap\ytb_full_hd.pcapng ^
-  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib ^
-  --out-dir data/artifacts/pcap_ytb_full_hd ^
+```powershell
+python -m ml_pipeline.pcap_predict `
+  --pcap D:\CCNA\raw_pcap\ytb_full_hd.pcapng `
+  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib `
+  --out-dir data/artifacts/pcap_ytb_full_hd `
   --min-packets 10
 ```
 
-Equivalent installed CLI:
+Equivalent installed CLI after `python -m pip install -e .`:
 
-```bash
-traffic-clf predict-pcap ^
-  --pcap D:\CCNA\raw_pcap\ytb_full_hd.pcapng ^
-  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib ^
+```powershell
+traffic-clf predict-pcap `
+  --pcap D:\CCNA\raw_pcap\ytb_full_hd.pcapng `
+  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib `
   --out-dir data/artifacts/pcap_ytb_full_hd
 ```
 
@@ -147,10 +150,10 @@ For another PCAP, replace only `--pcap` and optionally `--out-dir`.
 
 ## Evaluate Existing Model
 
-```bash
-python -m ml_pipeline.evaluate ^
-  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib ^
-  --data data/raw/final_dataset_63_classes_splt.parquet ^
+```powershell
+python -m ml_pipeline.evaluate `
+  --model data/artifacts/application_63_classes_splt_train_eval/model.joblib `
+  --data data/raw/final_dataset_63_classes_splt.parquet `
   --out-dir data/artifacts/application_63_classes_splt_eval
 ```
 
@@ -164,20 +167,20 @@ python -m pip install -e .[pcap]
 
 Extract flows:
 
-```bash
-python -m ml_pipeline.nfstream_ingest ^
-  --pcap samples/input.pcap ^
-  --out data/interim/flows.parquet ^
-  --n-dissections 20 ^
+```powershell
+python -m ml_pipeline.nfstream_ingest `
+  --pcap samples/input.pcap `
+  --out data/interim/flows.parquet `
+  --n-dissections 20 `
   --splt-analysis 25
 ```
 
 Prepare a curated SPLT dataset:
 
-```bash
-python -m ml_pipeline.prepare ^
-  --input data/interim/flows.parquet ^
-  --out data/processed/splt_dataset.parquet ^
+```powershell
+python -m ml_pipeline.prepare `
+  --input data/interim/flows.parquet `
+  --out data/processed/splt_dataset.parquet `
   --target-column application_name
 ```
 
