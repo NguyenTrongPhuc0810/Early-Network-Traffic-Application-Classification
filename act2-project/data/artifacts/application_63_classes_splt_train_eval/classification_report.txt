@@ -1,0 +1,69 @@
+                         precision    recall  f1-score   support
+
+             BitTorrent       1.00      0.98      0.99       924
+                    DNS       1.00      0.99      0.99       837
+                Discord       1.00      1.00      1.00      1144
+                   HTTP       0.99      0.99      0.99      2374
+            HTTP.Google       0.98      0.92      0.95       217
+             HTTP.Steam       0.98      0.97      0.97       249
+           HTTP.UBNTAC2       1.00      1.00      1.00       217
+     HTTP.WindowsUpdate       0.98      0.96      0.97       398
+           HTTP_Connect       1.00      0.99      1.00       304
+                  LLMNR       1.00      1.00      1.00       441
+                   QUIC       0.92      0.87      0.89      2964
+             QUIC.Apple       0.99      0.99      0.99       343
+        QUIC.Cloudflare       0.96      0.79      0.87       250
+           QUIC.Discord       0.95      0.94      0.94       750
+           QUIC.DoH_DoT       1.00      0.86      0.93       241
+          QUIC.Facebook       0.96      0.92      0.94       868
+            QUIC.Google       0.85      0.97      0.90      6482
+    QUIC.GoogleServices       0.89      0.76      0.82      1847
+         QUIC.Instagram       0.92      0.96      0.94       809
+      QUIC.Microsoft365       0.89      0.97      0.93       242
+         QUIC.PlayStore       0.97      0.79      0.87       987
+           QUIC.Spotify       0.89      0.96      0.92      1201
+            QUIC.TikTok       1.00      0.99      1.00       978
+            QUIC.Twitch       0.99      0.95      0.97       212
+           QUIC.YouTube       0.95      0.81      0.87      2460
+QUIC.iCloudPrivateRelay       1.00      0.99      0.99       300
+                    RDP       1.00      1.00      1.00       552
+                   SNMP       1.00      1.00      1.00      2746
+                    SSH       1.00      1.00      1.00       437
+                   STUN       1.00      0.99      0.99       605
+        STUN.GoogleCall       1.00      0.99      1.00       342
+     SteamDatagramRelay       1.00      1.00      1.00       493
+                    TLS       0.91      0.98      0.94     18707
+ TLS.ADS_Analytic_Track       0.96      0.78      0.86      1717
+              TLS.Apple       0.96      0.92      0.94      1539
+        TLS.AppleiCloud       0.97      0.96      0.97      1107
+        TLS.AppleiTunes       0.96      0.87      0.91       304
+           TLS.Cybersec       0.97      0.85      0.91       257
+            TLS.DoH_DoT       0.99      0.87      0.92       268
+     TLS.ElectronicArts       0.99      0.92      0.95       287
+          TLS.EpicGames       0.99      0.96      0.97       678
+           TLS.Facebook       0.97      0.89      0.93       684
+  TLS.FacebookMessenger       0.97      0.89      0.93       202
+         TLS.GeForceNow       0.99      0.93      0.96       400
+             TLS.Google       0.89      0.86      0.87      2003
+     TLS.GoogleServices       0.89      0.91      0.90      2166
+          TLS.Instagram       0.93      0.85      0.89       250
+        TLS.MS_OneDrive       1.00      0.88      0.94       356
+          TLS.Microsoft       0.97      0.93      0.95      1958
+       TLS.Microsoft365       0.97      0.96      0.97      3505
+          TLS.PlayStore       0.93      0.80      0.86       522
+        TLS.Playstation       0.99      0.95      0.97       263
+          TLS.RiotGames       0.99      0.97      0.98       506
+             TLS.Roblox       0.99      0.96      0.98       798
+            TLS.Spotify       0.89      0.87      0.88       759
+              TLS.Steam       0.97      0.87      0.92       692
+              TLS.Teams       0.94      0.82      0.87       374
+             TLS.TikTok       0.96      0.95      0.96      3353
+             TLS.Twitch       0.96      0.69      0.80       357
+                 TLS.VK       0.99      0.93      0.96       225
+      TLS.WindowsUpdate       1.00      0.99      0.99       777
+            TLS.YouTube       0.90      0.77      0.83       542
+               WhatsApp       1.00      0.98      0.99       241
+
+               accuracy                           0.94     79011
+              macro avg       0.97      0.92      0.94     79011
+           weighted avg       0.94      0.94      0.94     79011

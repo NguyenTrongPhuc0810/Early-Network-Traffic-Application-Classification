@@ -1,0 +1,12 @@
+taxonomy:
+  target_column: task_label
+  source_dataset: vnat
+  task_patterns:
+    VideoStreaming:
+      - youtube
+      - netflix
+      - vimeo
+    Conferencing:
+      - voip
+      - skype-chat
+

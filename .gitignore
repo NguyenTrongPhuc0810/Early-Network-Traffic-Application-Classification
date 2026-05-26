@@ -1,0 +1,73 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# macOS
+.DS_Store
+
+# Generated output files
+output/
+outputs/
+results/
+reports/
+bench_out/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# IDE
+.vscode/
+.idea/
+
+# Python virtual environments
+.venv/
+venv/
+env/
+.env
+
+# Heavy datasets and packet captures must live outside Git.
+*.parquet
+*.csv
+*.tsv
+*.h5
+*.hdf5
+*.pcap
+*.pcapng
+*.mmdb
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# Trained models and ML artifacts must be published via releases/object storage.
+*.joblib
+*.pkl
+*.pickle
+*.onnx
+*.pt
+*.pth
+*.model
+*.sav
+
+# Local data/artifact directories. Keep placeholders only.
+data/**
+01-data-collection/data/**
+01-data-collection/pcap/**
+01-data-collection/database/**
+02-app-classification/data/**
+act2-project/data/**
+act2-code/data/**
+!**/.gitkeep
+
+# Generated C export outputs.
+generated/
+src/ebpf_export/generated/

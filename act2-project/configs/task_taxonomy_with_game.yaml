@@ -1,0 +1,40 @@
+taxonomy:
+  target_column: task_label
+  source_dataset: act2
+  task_labels:
+    VideoStreaming:
+      - QUIC.YouTube
+      - TLS.YouTube
+    SoftwareUpdate:
+      - HTTP.WindowsUpdate
+      - TLS.WindowsUpdate
+      - QUIC.PlayStore
+      - TLS.PlayStore
+    Conferencing:
+      - TLS.Teams
+      - Discord
+      - QUIC.Discord
+      - WhatsApp
+      - STUN.GoogleCall
+    SocialMedia:
+      - TLS.TikTok
+      - QUIC.TikTok
+      - TLS.Instagram
+      - QUIC.Instagram
+      - TLS.Facebook
+      - QUIC.Facebook
+      - TLS.FacebookMessenger
+    FileStorage:
+      - TLS.AppleiCloud
+      - TLS.MS_OneDrive
+    Game:
+      - TLS.Roblox
+      - TLS.Steam
+      - HTTP.Steam
+      - TLS.EpicGames
+      - TLS.RiotGames
+      - SteamDatagramRelay
+      - TLS.GeForceNow
+      - TLS.ElectronicArts
+      - TLS.Playstation
+

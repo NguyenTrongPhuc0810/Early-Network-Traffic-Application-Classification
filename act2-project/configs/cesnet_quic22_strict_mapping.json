@@ -1,0 +1,12 @@
+{
+  "youtube": "QUIC.YouTube",
+  "spotify": "QUIC.Spotify",
+  "discord": "QUIC.Discord",
+  "instagram": "QUIC.Instagram",
+  "tiktok": "QUIC.TikTok",
+  "whatsapp": "WhatsApp",
+  "dns-doh": "QUIC.DoH_DoT",
+  "apple-privaterelay": "QUIC.iCloudPrivateRelay",
+  "facebook-media": "QUIC.Facebook",
+  "microsoft-outlook": "QUIC.Microsoft365"
+}

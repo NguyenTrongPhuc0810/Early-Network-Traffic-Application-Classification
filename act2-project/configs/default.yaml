@@ -1,0 +1,70 @@
+project:
+  name: act2-project
+
+paths:
+  raw_dir: data/raw
+  interim_dir: data/interim
+  processed_dir: data/processed
+  artifacts_dir: data/artifacts
+
+dataset:
+  train_data_path: ../02-app-classification/data/data.parquet
+  application_column: application_name
+  target_column: application_category_name
+  splt_column: splt_ps
+  splt_feature_columns:
+    - splt_direction
+    - splt_ps
+    - splt_piat_ms
+  label_columns:
+    - application_name
+    - application_category_name
+  training_filter_columns:
+    - application_is_guessed
+    - application_confidence
+    - application_name
+    - application_category_name
+    - bidirectional_packets
+  inference_required_columns:
+    - bidirectional_packets
+    - splt_direction
+    - splt_ps
+    - splt_piat_ms
+  interim_required_columns:
+    - bidirectional_packets
+    - splt_direction
+    - splt_ps
+    - splt_piat_ms
+  interim_optional_dpi_columns:
+    - application_is_guessed
+    - application_confidence
+    - application_name
+    - application_category_name
+  min_packets: 10
+  min_samples_per_application: 1000
+
+split:
+  test_size: 0.2
+  random_state: 42
+
+model:
+  kind: random_forest
+  n_estimators: 100
+  n_jobs: -1
+  class_weight: balanced
+
+nfstream:
+  n_meters: 1
+  n_dissections: 20
+  statistical_analysis: false
+  splt_analysis: 25
+  accounting_mode: 2
+
+artifacts:
+  model_file: model.joblib
+  classification_report_text: classification_report.txt
+  classification_report_json: classification_report.json
+  confusion_matrix_png: confusion_matrix.png
+  predictions_file: predictions.parquet
+  prediction_summary_text: prediction_summary.txt
+  run_metadata_file: run_metadata.json
