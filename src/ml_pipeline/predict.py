@@ -30,6 +30,16 @@ def load_model_bundle(model_path: Path) -> dict[str, Any]:
     return bundle
 
 
+def _format_sequence_for_output(sequence: list[float]) -> list[int | float]:
+    formatted: list[int | float] = []
+    for value in sequence:
+        if float(value).is_integer():
+            formatted.append(int(value))
+        else:
+            formatted.append(float(value))
+    return formatted
+
+
 def predict_parquet(
     *,
     model_path: Path,
@@ -80,15 +90,15 @@ def predict_dataframe(
     predictions = model.predict(features)
 
     if compact_output:
-        output = pd.DataFrame({"flow_index": dataframe.index.to_numpy()})
-        if "bidirectional_packets" in dataframe.columns:
-            output["bidirectional_packets"] = dataframe["bidirectional_packets"].to_numpy()
-        output[f"predicted_{resolved_target}"] = predictions
+        output = dataframe.loc[:, list(DEFAULT_SPLT_COLUMNS)].copy()
+        for column in DEFAULT_SPLT_COLUMNS:
+            output[column] = output[column].apply(_format_sequence_for_output)
+        output[resolved_target] = predictions
     else:
         output = dataframe.copy()
         output[f"predicted_{resolved_target}"] = predictions
 
-    if hasattr(model, "predict_proba"):
+    if not compact_output and hasattr(model, "predict_proba"):
         probabilities = model.predict_proba(features)
         output["prediction_confidence"] = probabilities.max(axis=1)
 
@@ -105,6 +115,7 @@ def predict_dataframe(
         "min_packets": int(min_packets),
         "feature_width": int(resolved_width),
         "feature_count": int(features.shape[1]),
+        "output_columns": list(output.columns),
         "prediction_counts": {str(key): int(value) for key, value in summary.items()},
     }
     write_json(out_path.with_suffix(".metadata.json"), metadata)

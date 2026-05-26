@@ -130,14 +130,18 @@ data/artifacts/pcap_ytb_full_hd/predictions.parquet
 data/artifacts/pcap_ytb_full_hd/pcap_prediction_metadata.json
 ```
 
-`predictions.parquet` is intentionally compact. It contains only:
+`predictions.parquet` is intentionally compact and follows the same row schema
+as `data/raw/final_dataset_63_classes_splt.parquet`, but without
+`application_category_name`:
 
 ```text
-flow_index
-bidirectional_packets
-predicted_application_name
-prediction_confidence
+splt_direction
+splt_ps
+splt_piat_ms
+application_name
 ```
+
+Here `application_name` is the model prediction for the filtered PCAP flow.
 
 For another PCAP, replace only `--pcap` and optionally `--out-dir`.
 
