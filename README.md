@@ -1,4 +1,5 @@
 # Early Network Traffic Application Classification
+<img width="2108" height="2084" alt="network_classification_trafic drawio" src="https://github.com/user-attachments/assets/5ffa43a9-1fa7-4b60-b001-93535b50359e" />
 
 End-to-end SPLT pipeline for early network traffic application classification.
 The repository is structured so a new user can clone it, install dependencies,
