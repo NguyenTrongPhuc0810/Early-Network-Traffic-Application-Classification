@@ -1,0 +1,12 @@
+joblib
+matplotlib
+numpy
+pandas
+pyarrow
+scikit-learn
+
+[export]
+m2cgen
+
+[pcap]
+nfstream
